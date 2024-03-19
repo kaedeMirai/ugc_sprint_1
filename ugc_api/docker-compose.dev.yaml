@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  ugc_api_service:
+    container_name: ugc_api_container
+    image: ugc_api
+    env_file:
+      - .env
+    ports:
+      - "8888:8000"
+    networks:
+      - ugc_etl_kafka_network
+
+  nginx:
+    image: nginx:latest
+    profiles:
+      - prod-like
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/configs:/etc/nginx/conf.d:ro
+    depends_on:
+      - ugc_api_service
+    ports:
+      - "80:80"
+    networks:
+      - ugc_etl_kafka_network
+
+
+networks:
+  ugc_etl_kafka_network:
+    external: true

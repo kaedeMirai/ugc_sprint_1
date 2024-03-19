@@ -1,0 +1,32 @@
+@startuml
+skinparam componentStyle uml2
+actor Client
+actor Admin
+
+component AdminPanel
+database MoviesPostgres
+
+component MoviesETL
+database MoviesElasticsearch
+
+component MoviesApi
+database MoviesRedis
+
+component AuthApi
+database AuthPostgres
+database AuthRedis
+
+Client -down-> MoviesApi
+MoviesApi -down-> MoviesElasticsearch: read movies data
+MoviesApi -left-> MoviesRedis: store response cache
+
+Admin -> AdminPanel: manage movies data
+AdminPanel -> MoviesPostgres: store movies data
+MoviesETL -> MoviesPostgres: read
+MoviesETL -left-> MoviesElasticsearch: write
+
+Client -up-> AuthApi: auth
+Admin -up-> AuthApi: auth
+AuthApi -right-> AuthPostgres: store users and roles data
+AuthApi -left-> AuthRedis: store revoked tokens
+@enduml

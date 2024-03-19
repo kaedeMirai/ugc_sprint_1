@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "ugc-api"
+version = "0.1.0"
+description = "UGC api"
+authors = ["Steven Altamirano <steven.altamirano.games@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.105.0"
+pydantic = "^2.5.3"
+pydantic-settings = "^2.1.0"
+uvicorn = "^0.25.0"
+gunicorn = "^21.2.0"
+orjson = "^3.9.10"
+aiokafka = "^0.10.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

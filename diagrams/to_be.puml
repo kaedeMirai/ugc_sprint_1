@@ -1,0 +1,47 @@
+@startuml
+skinparam componentStyle uml2
+actor Client
+actor Admin
+actor Analyst
+
+component AdminPanel
+database MoviesPostgres
+
+component MoviesEtl
+database MoviesElasticsearch
+
+component MoviesApi
+database MoviesRedis
+
+component AuthApi
+database AuthPostgres
+database AuthRedis
+
+component UgcApi
+database Kafka
+
+component UgcEtl
+database ClickHouse
+
+Client -down-> MoviesApi
+MoviesApi -right-> MoviesElasticsearch: read movies data
+MoviesApi -left-> MoviesRedis: store response cache
+
+Admin -right-> AdminPanel: manage movies data
+AdminPanel -> MoviesPostgres: store movies data
+MoviesEtl -left-> MoviesElasticsearch: write
+MoviesEtl -right-> MoviesPostgres: read
+
+Client -up-> AuthApi: auth
+Admin -up-> AuthApi: auth
+AuthApi -right-> AuthPostgres: store users and roles data
+AuthApi -left-> AuthRedis: store revoked tokens
+
+Client -left-> UgcApi: store users activities
+UgcApi -left-> Kafka: store users activities
+
+UgcEtl -right-> Kafka: read
+UgcEtl -up-> ClickHouse: write
+
+Analyst -left-> ClickHouse: analyze users activities
+@enduml
